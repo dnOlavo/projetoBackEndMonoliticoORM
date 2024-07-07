@@ -22,4 +22,16 @@ public class Categoria {
         // Alteração para @OneToMany com mappedBy para indicar o "outro lado" da relação
         @OneToMany(mappedBy = "categoria")
         private List<Item> items = new ArrayList<Item>();
+
+        public Categoria addComment(Item item){
+                items.add(item);
+                item.setCategoria(this);
+                return this;
+            }
+        
+            public Categoria removeComment(Item item){
+                items.remove(item);
+                item.setCategoria(this);
+                return this;
+            }
 }
