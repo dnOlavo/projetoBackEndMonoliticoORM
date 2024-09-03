@@ -58,4 +58,20 @@ public class PacoteService {
                 .orElseThrow(() -> new NaoAcheiException("Pacote com ID " + id + " não encontrado."));
         pacoteRepository.delete(pacote);
     }
+
+    public List<Pacote> getPacotesByStatus(String status) {
+        List<Pacote> pacotes = pacoteRepository.findByStatus(status);
+        if (pacotes.isEmpty()) {
+            throw new NaoAcheiException("Nenhum pacote encontrado com status: " + status);
+        }
+        return pacotes;
+    }
+
+    public List<Pacote> getPacotesByDestinatario(String destinatario) {
+        List<Pacote> pacotes = pacoteRepository.findByDestinatarioContainingIgnoreCase(destinatario);
+        if (pacotes.isEmpty()) {
+            throw new NaoAcheiException("Nenhum pacote encontrado para o destinatário: " + destinatario);
+        }
+        return pacotes;
+    }
 }
