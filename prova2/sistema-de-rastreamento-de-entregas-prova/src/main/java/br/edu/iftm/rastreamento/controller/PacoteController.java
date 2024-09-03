@@ -67,4 +67,24 @@ public class PacoteController {
         pacoteService.deletePacote(id);
         return ResponseEntity.noContent().build();
     }
+
+	// Endpoint para buscar pacotes por status
+    @GetMapping("/status/{status}")
+    public ResponseEntity<List<Pacote>> buscarPorStatus(@PathVariable String status) {
+        List<Pacote> pacotes = pacoteService.getPacotesByStatus(status);
+        if (pacotes.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(pacotes);
+    }
+
+    // Endpoint para buscar pacotes por destinatário
+    @GetMapping("/destinatario/{destinatario}")
+    public ResponseEntity<List<Pacote>> buscarPorDestinatario(@PathVariable String destinatario) {
+        List<Pacote> pacotes = pacoteService.getPacotesByDestinatario(destinatario);
+        if (pacotes.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(pacotes);
+    }
 }
