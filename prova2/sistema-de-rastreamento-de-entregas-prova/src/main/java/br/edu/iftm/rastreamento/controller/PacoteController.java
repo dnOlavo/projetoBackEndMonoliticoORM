@@ -3,47 +3,68 @@ package br.edu.iftm.rastreamento.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import br.edu.iftm.rastreamento.model.Pacote;
 import br.edu.iftm.rastreamento.service.PacoteService;
+import io.swagger.annotations.*;
 
 @RestController
 @RequestMapping("/pacotes")
+@Api(value = "Pacote Controller", tags = {"Pacotes"})
 public class PacoteController {
 
-	@Autowired
-	private PacoteService pacoteService;
+    @Autowired
+    private PacoteService pacoteService;
 
-	@GetMapping
-	public List<Pacote> getAllPacotes() {
-		return pacoteService.getAllPacotes();
-	}
+    @ApiOperation(value = "Obter todos os pacotes")
+    @GetMapping
+    public List<Pacote> getAllPacotes() {
+        return pacoteService.getAllPacotes();
+    }
 
-	@PostMapping
-	public Pacote createPacote(@RequestBody Pacote pacote) {
-		return pacoteService.createPacote(pacote);
-	}
+    @ApiOperation(value = "Criar um novo pacote")
+    @ApiResponses(value = {
+        @ApiResponse(code = 201, message = "Pacote criado com sucesso")
+    })
+    @PostMapping
+    public ResponseEntity<Pacote> createPacote(@RequestBody Pacote pacote) {
+        Pacote novoPacote = pacoteService.createPacote(pacote);
+        return ResponseEntity.status(HttpStatus.CREATED).body(novoPacote);
+    }
 
-	@GetMapping("/{id}")
-	public Pacote getPacoteById(@PathVariable Long id) {
-		return pacoteService.getPacoteById(id);
-	}
+    @ApiOperation(value = "Obter pacote por ID")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Pacote encontrado"),
+        @ApiResponse(code = 404, message = "Pacote não encontrado")
+    })
+    @GetMapping("/{id}")
+    public ResponseEntity<Pacote> getPacoteById(@PathVariable Long id) {
+        Pacote pacote = pacoteService.getPacoteById(id);
+        return ResponseEntity.ok(pacote);
+    }
 
-	@PutMapping("/{id}")
-	public Pacote updatePacote(@PathVariable Long id, @RequestBody Pacote pacoteDetails) {
-		return pacoteService.updatePacote(id, pacoteDetails);
-	}
+    @ApiOperation(value = "Atualizar pacote por ID")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Pacote atualizado com sucesso"),
+        @ApiResponse(code = 404, message = "Pacote não encontrado")
+    })
+    @PutMapping("/{id}")
+    public ResponseEntity<Pacote> updatePacote(@PathVariable Long id, @RequestBody Pacote pacoteDetails) {
+        Pacote pacoteAtualizado = pacoteService.updatePacote(id, pacoteDetails);
+        return ResponseEntity.ok(pacoteAtualizado);
+    }
 
-	@DeleteMapping("/{id}")
-	public void deletePacote(@PathVariable Long id) {
-		pacoteService.deletePacote(id);
-	}
+    @ApiOperation(value = "Deletar pacote por ID")
+    @ApiResponses(value = {
+        @ApiResponse(code = 204, message = "Pacote deletado com sucesso"),
+        @ApiResponse(code = 404, message = "Pacote não encontrado")
+    })
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePacote(@PathVariable Long id) {
+        pacoteService.deletePacote(id);
+        return ResponseEntity.noContent().build();
+    }
 }
