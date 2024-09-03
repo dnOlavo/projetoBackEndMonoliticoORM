@@ -12,6 +12,7 @@ import br.edu.iftm.rastreamento.model.Pacote;
 import br.edu.iftm.rastreamento.model.Rastreamento;
 import br.edu.iftm.rastreamento.repository.PacoteRepository;
 import br.edu.iftm.rastreamento.repository.RastreamentoRepository;
+import br.edu.iftm.rastreamento.service.exceptions.NaoAcheiException;
 
 @Service
 public class PacoteService {
@@ -30,7 +31,8 @@ public class PacoteService {
     }
 
     public Pacote getPacoteById(Long id) {
-        return pacoteRepository.findById(id).get();
+        return pacoteRepository.findById(id)
+                .orElseThrow(() -> new NaoAcheiException("Pacote com ID " + id + " não encontrado."));
     }
 
     public Pacote createPacote(Pacote pacote) {
@@ -38,17 +40,22 @@ public class PacoteService {
     }
 
     public Pacote updatePacote(Long id, Pacote pacoteDetails) {
-        Pacote pacote = pacoteRepository.findById(id).get();
-        pacote.setId(id);
-        pacote.atualizarStatus(pacoteDetails.getStatus(), Date.from(Instant.now()), "não implementado");
-        //obter o ultimo rastreamento
-        Rastreamento ultiRastreamento = pacote.getRastreamentos().get(pacote.getRastreamentos().size() - 1);
-        rastreamentoRepository.save(ultiRastreamento);
+        Pacote pacote = pacoteRepository.findById(id)
+                .orElseThrow(() -> new NaoAcheiException("Pacote com ID " + id + " não encontrado."));
+
+        pacote.setDestinatario(pacoteDetails.getDestinatario());
+        pacote.setEndereco(pacoteDetails.getEndereco());
+        pacote.atualizarStatus(pacoteDetails.getStatus(), Date.from(Instant.now()), "Localização atualizada");
+
+        Rastreamento ultimoRastreamento = pacote.getRastreamentos().get(pacote.getRastreamentos().size() - 1);
+        rastreamentoRepository.save(ultimoRastreamento);
+
         return pacoteRepository.save(pacote);
     }
 
     public void deletePacote(Long id) {
-        Pacote pacote = pacoteRepository.findById(id).get();
+        Pacote pacote = pacoteRepository.findById(id)
+                .orElseThrow(() -> new NaoAcheiException("Pacote com ID " + id + " não encontrado."));
         pacoteRepository.delete(pacote);
     }
 }
