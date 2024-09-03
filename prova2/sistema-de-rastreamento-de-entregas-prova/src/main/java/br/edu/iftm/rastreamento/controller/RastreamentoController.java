@@ -21,7 +21,7 @@ public class RastreamentoController {
     @ApiOperation(value = "Obter rastreamentos por ID do pacote")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Rastreamentos encontrados"),
-        @ApiResponse(code = 404, message = "Pacote não encontrado")
+        @ApiResponse(code = 404, message = "Pacote ou rastreamentos não encontrados")
     })
     @GetMapping("/{id}")
     public ResponseEntity<List<Rastreamento>> getRastreamentosPacote(@PathVariable Long id) {
