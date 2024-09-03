@@ -9,7 +9,10 @@ import org.springframework.web.bind.annotation.*;
 
 import br.edu.iftm.rastreamento.model.Pacote;
 import br.edu.iftm.rastreamento.service.PacoteService;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 @RestController
 @RequestMapping("/pacotes")
@@ -19,13 +22,13 @@ public class PacoteController {
     @Autowired
     private PacoteService pacoteService;
 
-    @ApiOperation(value = "Obter todos os pacotes")
+    @ApiOperation(value = "Obter todos os pacotes", response = List.class)
     @GetMapping
     public List<Pacote> getAllPacotes() {
         return pacoteService.getAllPacotes();
     }
 
-    @ApiOperation(value = "Criar um novo pacote")
+    @ApiOperation(value = "Criar um novo pacote", response = Pacote.class)
     @ApiResponses(value = {
         @ApiResponse(code = 201, message = "Pacote criado com sucesso")
     })
@@ -35,7 +38,7 @@ public class PacoteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(novoPacote);
     }
 
-    @ApiOperation(value = "Obter pacote por ID")
+    @ApiOperation(value = "Obter pacote por ID", response = Pacote.class)
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Pacote encontrado"),
         @ApiResponse(code = 404, message = "Pacote não encontrado")
@@ -46,7 +49,7 @@ public class PacoteController {
         return ResponseEntity.ok(pacote);
     }
 
-    @ApiOperation(value = "Atualizar pacote por ID")
+    @ApiOperation(value = "Atualizar pacote por ID", response = Pacote.class)
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Pacote atualizado com sucesso"),
         @ApiResponse(code = 404, message = "Pacote não encontrado")
@@ -68,7 +71,12 @@ public class PacoteController {
         return ResponseEntity.noContent().build();
     }
 
-	// Endpoint para buscar pacotes por status
+    @ApiOperation(value = "Buscar pacotes por status", response = List.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Pacotes encontrados"),
+        @ApiResponse(code = 204, message = "Nenhum pacote encontrado com o status fornecido"),
+        @ApiResponse(code = 400, message = "Parâmetro de status inválido")
+    })
     @GetMapping("/status/{status}")
     public ResponseEntity<List<Pacote>> buscarPorStatus(@PathVariable String status) {
         List<Pacote> pacotes = pacoteService.getPacotesByStatus(status);
@@ -78,7 +86,12 @@ public class PacoteController {
         return ResponseEntity.ok(pacotes);
     }
 
-    // Endpoint para buscar pacotes por destinatário
+    @ApiOperation(value = "Buscar pacotes por destinatário", response = List.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Pacotes encontrados"),
+        @ApiResponse(code = 204, message = "Nenhum pacote encontrado para o destinatário fornecido"),
+        @ApiResponse(code = 400, message = "Parâmetro de destinatário inválido")
+    })
     @GetMapping("/destinatario/{destinatario}")
     public ResponseEntity<List<Pacote>> buscarPorDestinatario(@PathVariable String destinatario) {
         List<Pacote> pacotes = pacoteService.getPacotesByDestinatario(destinatario);
